@@ -3,6 +3,8 @@ package fr.raoux.STCompiler.parser;
 import java.util.Stack;
 
 import fr.raoux.STCompiler.ast.AST;
+import fr.raoux.STCompiler.parser.Exception.LanguageException;
+import fr.raoux.STCompiler.parser.Exception.SyntaxeException;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 
 public abstract class ParserAbstract {
@@ -16,6 +18,6 @@ public abstract class ParserAbstract {
 	}
 
 	public abstract void build();
-	public abstract AST run();
+	public abstract AST run(SourceReader src) throws SyntaxeException, LanguageException;
 
 }

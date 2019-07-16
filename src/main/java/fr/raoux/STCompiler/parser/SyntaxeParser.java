@@ -5,9 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
+import fr.raoux.STCompiler.parser.symbols.Dynamicterminal;
+import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.NonTerminal;
 import fr.raoux.STCompiler.parser.symbols.Rule;
+import fr.raoux.STCompiler.parser.symbols.SpaceTerminal;
 import fr.raoux.STCompiler.parser.symbols.Terminal;
 
 enum SyntaxStatus{
@@ -72,8 +76,16 @@ public class SyntaxeParser {
 
 	private void parseConfiguration(String line) {
 		String[] confl = line.split(":");
-		if (confl[0].equals("startSymbol")) {
+		switch(confl[0]) {
+		case "startSymbol":
 			this.startSymbol = confl[1];
+			break;
+		case "emptySymbol":
+			this.lang.addTerminal(new EmptyTerminal(confl[1]));
+			break;
+		case "spaceSymbol":
+			this.lang.addTerminal(new SpaceTerminal(confl[1]));
+			break;
 		}
 	}
 
@@ -91,10 +103,29 @@ public class SyntaxeParser {
 	}
 
 	private void parseTerminals(String line) {
-		String[] alphabet = line.split(" ");
-		for (String letter: alphabet) {
-			this.lang.addTerminal(new Terminal(letter));
+		String[] com = line.split(":");
+		String[] alphabet;
+		switch(com[0]) {
+		case "static":
+			alphabet= com[1].split(" ");
+			for (String letter: alphabet) {
+				this.lang.addTerminal(new Terminal(letter));
+			}
+			break;
+		case "breaks":
+			alphabet = com[1].split(" ");
+			for (String letter: alphabet) {
+				this.lang.addTerminal(new BreakerTerminal(letter));
+			}
+			break;
+		case "dynamic":
+			alphabet = com[1].split(" ");
+			this.lang.addTerminal(new Dynamicterminal(alphabet[0], alphabet[1]));
+			break;
 		}
+
+
+
 	}
 
 	private void parseNonTerminals(String line) {

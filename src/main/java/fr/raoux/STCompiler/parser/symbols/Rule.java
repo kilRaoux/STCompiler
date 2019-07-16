@@ -95,7 +95,6 @@ public class Rule {
 			}
 		}
 		if(this.symbols.get(this.symbols.size()-1) == nt) {
-			System.out.println("NAME "+master.getName()+" LAST "+ nt.getName());
 			res.addAll(master.getSuivant());
 		}
 		return res;

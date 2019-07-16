@@ -2,12 +2,16 @@ comments:
     Salut c'est un fichier de syntaxe.
     
 configurations:
-    startSymbol:A
+    startSymbol:S
+    emptySymbol:<empty>
+    spaceSymbol:<space>
     
 terminals:
-    var + - * / =
+    breaks:+ - * / = . ( ) [ ] ;
+    dynamic:var [0-9]+
+    static:if else class 
 nonterminals:
-    S A B C M
+    S A B C M var2
 rules:
     S var = A
     

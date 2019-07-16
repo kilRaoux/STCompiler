@@ -1,10 +1,13 @@
 package fr.raoux.STCompiler.parser;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
-import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
+import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
+import fr.raoux.STCompiler.parser.symbols.Dynamicterminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.NonTerminal;
 import fr.raoux.STCompiler.parser.symbols.Rule;
@@ -12,19 +15,18 @@ import fr.raoux.STCompiler.parser.symbols.Terminal;
 
 
 public class Language {
-	private Set<ISymbol> symbols;
-	private Set<Terminal> terminals;
-	private Set<NonTerminal> nonTerminals;
+	private Set<ISymbol> symbols = new HashSet<ISymbol>();
+	private Set<Terminal> terminals = new HashSet<Terminal>();
+	private Set<Dynamicterminal> dynamicTerminal = new HashSet<>();
+	private Set<BreakerTerminal> breakerTerminals = new HashSet<BreakerTerminal>();
+	private Set<NonTerminal> nonTerminals = new HashSet<NonTerminal>();
 	private NonTerminal startSymbol;
+	private List<Character> breakers = new ArrayList<Character>();
 
-	private Set<Rule> rules;
+	private Set<Rule> rules = new HashSet<Rule>();
+	private int maxSizeToken = 32;
 
 	public Language() {
-		this.symbols = new HashSet<ISymbol>();
-		this.terminals = new HashSet<Terminal>();
-		this.nonTerminals = new HashSet<NonTerminal>();
-		this.rules = new HashSet<Rule>();
-		this.addTerminal(new EmptyTerminal());
 	}
 
 	public Terminal getTerminal(String name) {
@@ -66,6 +68,16 @@ public class Language {
 		this.terminals.add(terminal);
 		this.symbols.add(terminal);
 	}
+	public void addTerminal(BreakerTerminal terminal) {
+		this.breakerTerminals.add(terminal);
+		this.terminals.add(terminal);
+		this.symbols.add(terminal);
+	}
+	public void addTerminal(Dynamicterminal terminal) {
+		this.terminals.add(terminal);
+		this.symbols.add(terminal);
+		this.dynamicTerminal.add(terminal);
+	}
 	public void addNonTerminal(NonTerminal nonTerminal) {
 		this.nonTerminals.add(nonTerminal);
 		this.symbols.add(nonTerminal);
@@ -73,7 +85,6 @@ public class Language {
 	public void addRule(Rule rule) {
 		this.rules.add(rule);
 	}
-
 
 	public ISymbol getSymbol(String str) {
 		ISymbol symbol = null;
@@ -99,7 +110,11 @@ public class Language {
 		this.nullable();
 		this.premier();
 		this.suivant();
+		for(BreakerTerminal b:this.breakerTerminals) {
+			this.breakers.add(b.getSeparator());
+		}
 	}
+
 	private void nullable() {
 		for (ISymbol symb:symbols) {
 			symb.isNullable();
@@ -138,5 +153,38 @@ public class Language {
 		for (ISymbol symb:this.nonTerminals) {
 			System.out.println(symb);
 		}
+	}
+
+	public Terminal avance(SourceReader src) {
+		String temp = ""+src.nextChar();
+		Terminal res = this.getTerminal(temp);
+		if(res == null) {
+			char c;
+			while (src.canContinue()) {
+				c = src.nextChar();
+				if(this.breakers.contains(c)) {
+					if (temp.isEmpty()) {
+						temp += c;
+						System.out.println("breaker"+ temp);
+					}
+					break;
+				}else {
+					temp += c;
+				}
+			}
+			res = this.getTerminal(temp);
+			if (res == null) {
+				for (Dynamicterminal t: this.dynamicTerminal) {
+					if (t.check(temp)) {
+						res = t;
+						break;
+					}
+				}
+			}
+			src.before();
+		}
+		//if (res == null) res = "EOF";
+		System.out.println("temp:"+temp);
+		return res;
 	}
 }

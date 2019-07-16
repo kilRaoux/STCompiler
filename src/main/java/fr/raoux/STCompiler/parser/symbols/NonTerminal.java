@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
+
+import fr.raoux.STCompiler.parser.Exception.SyntaxeException;
 
 public class NonTerminal implements ISymbol {
 
@@ -46,14 +49,17 @@ public class NonTerminal implements ISymbol {
 	}
 
 
+	@Override
 	public int getId() {
 		return this.id;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public String getValue() {
 		return this.value;
 	}
@@ -81,6 +87,7 @@ public class NonTerminal implements ISymbol {
 		}
 		return sb.toString();
 	}
+	@Override
 	public boolean isNullable() {
 		if (nullableSet){
 			return this.nullable;
@@ -95,6 +102,7 @@ public class NonTerminal implements ISymbol {
 		}
 		return this.nullable;
 	}
+	@Override
 	public Set<Terminal> getSuivant() {
 		if(!this.suivantSet) {
 			this.suivantSet = true;
@@ -105,6 +113,7 @@ public class NonTerminal implements ISymbol {
 		return this.suivants;
 	}
 
+	@Override
 	public Set<Terminal> getPremier() {
 		if (!this.premierSet) {
 			this.premiers = new HashSet<Terminal>();
@@ -116,6 +125,7 @@ public class NonTerminal implements ISymbol {
 		}
 		return this.premiers;
 	}
+	@Override
 	public void isInner(Rule rule) {
 		this.inners.add(rule);
 	}
@@ -134,5 +144,23 @@ public class NonTerminal implements ISymbol {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void avance(Stack<ISymbol> stack, Terminal target) throws SyntaxeException{
+		System.out.print(this.name+"->");
+		for(Rule rule: rules) {
+			if(rule.getPremier().contains(target)) {
+				addToStack(stack,rule);
+			}
+		}
+		System.out.println();
+	}
+
+	public void addToStack(Stack stack, Rule rule) {
+		for (int i= rule.getSymbols().size()-1; i >= 0; i--) {
+			System.out.print(rule.getSymbols().get(i).getName()+", ");
+			stack.push(rule.getSymbols().get(i));
+		}
 	}
 }

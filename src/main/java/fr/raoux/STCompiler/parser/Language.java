@@ -5,10 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.transform.Source;
+
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
+import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
 import fr.raoux.STCompiler.parser.symbols.DynamicTerminal;
 import fr.raoux.STCompiler.parser.symbols.EOFTerminal;
+import fr.raoux.STCompiler.parser.symbols.GostTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.NonTerminal;
 import fr.raoux.STCompiler.parser.symbols.Rule;
@@ -25,6 +29,7 @@ public class Language {
 	private List<Character> breakers = new ArrayList<Character>();
 
 	private Set<Rule> rules = new HashSet<Rule>();
+	private String temp;
 	private int maxSizeToken = 32;
 
 	public Language() {
@@ -33,7 +38,7 @@ public class Language {
 	public Terminal getTerminal(String name) {
 		Terminal res = null;
 		for (Terminal symb: this.terminals) {
-			if (symb.getName().equals(name)) {
+			if (symb.getValue().equals(name)) {
 				res = symb;
 				break;
 			}
@@ -90,7 +95,7 @@ public class Language {
 	public ISymbol getSymbol(String str) {
 		ISymbol symbol = null;
 		for(ISymbol symb: this.symbols) {
-			if (symb.getName().equals(str)) {
+			if (symb.getValue().equals(str)) {
 				symbol = symb;
 				break;
 			}
@@ -156,41 +161,38 @@ public class Language {
 		}
 	}
 
-	public Terminal avance(SourceReader src) {
+	public Terminal avance(SourceReader src) throws SyntaxException {
 		char c = src.nextChar();
-		// We add the next char of source to string.
-		String temp = ""+c;
-		// We add try to find one terminal with.
+		this.temp = ""+c;
 		Terminal res = this.getTerminal(temp);
-		if (c=='\0') res = EOFTerminal.getInstance();
-		// If it's not done
-		else if(res == null) {
-			// while the source contain char
-			while (( c = src.nextChar())!='\0') {
-				// If c is a breaker terminal we break.
-				if(this.breakers.contains(c)) {
-					src.before();
-					break; 
-				}
-				// Else we add to string
-				else temp += c;
-			}
-			// we retry to find the terminal
-			res = this.getTerminal(temp);
-			// If isn't may be it's a dynamic terminal.
-			if (res == null) {
-				// we try every dynamic terminal
-				for (DynamicTerminal t: this.dynamicTerminal) {
-					if (t.check(temp)) {
-						res = t;
-						break;
-					}
-				}
-			}
-			
-		}
-		//if (res == null) res = "EOF";
-		//System.out.println("temp:"+temp);
+		if(c=='\0') return EOFTerminal.getInstance();
+		if(res instanceof GostTerminal) return avance(src);
+		if(res == null) res = this.findStaticTerminal(src);
+		if(res == null) res = this.findDynamicterminal();
+		if(res == null) throw new SyntaxException("<"+temp+">("+(int)temp.charAt(0)+")can't correctly be parse");
 		return res;
+	}
+	
+	private Terminal findStaticTerminal(SourceReader src) {
+		char c;
+		while (( c = src.nextChar())!='\0') {
+			// If c is a breaker terminal we break.
+			if(this.breakers.contains(c)) {
+				src.before();
+				break; 
+			}
+			else temp += c;
+		}
+		// we retry to find the terminal
+		return this.getTerminal(temp);
+	}
+	
+	private Terminal findDynamicterminal() {
+		for (DynamicTerminal t: this.dynamicTerminal) {
+			if (t.check(temp)) {
+				return t;
+			}
+		}
+		return null;
 	}
 }

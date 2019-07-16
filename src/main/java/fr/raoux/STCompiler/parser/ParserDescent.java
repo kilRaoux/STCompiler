@@ -2,7 +2,7 @@ package fr.raoux.STCompiler.parser;
 
 import fr.raoux.STCompiler.ast.AST;
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
-import fr.raoux.STCompiler.parser.Exception.SyntaxeException;
+import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 import fr.raoux.STCompiler.parser.symbols.EOFTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.Terminal;
@@ -32,7 +32,7 @@ public class ParserDescent extends ParserAbstract {
 	 * Function to generate the AST with one source code.
 	 */
 	@Override
-	public AST run(SourceReader src) throws SyntaxeException, LanguageException {
+	public AST run(SourceReader src) throws SyntaxException, LanguageException {
 		// Init Stack/target/src
 		this.stack.add(EOFTerminal.getInstance());
 		this.stack.add(lang.getStartSymbol());
@@ -43,8 +43,9 @@ public class ParserDescent extends ParserAbstract {
 		return new AST();
 	}
 
-	private boolean next(SourceReader src) throws SyntaxeException, LanguageException {
-		System.out.println("TARGET "+target.getName()+" STACKTOP "+ stack.peek().getName());
+	private boolean next(SourceReader src) throws SyntaxException, LanguageException {
+		System.out.println("TARGET "+target.getName()
+		+" STACKTOP "+ stack.peek().getName());
 		System.out.println("    P::"+printStack());
 		System.out.println("    S::"+src.getNextSource());
 		if( target.equals(EOFTerminal.getInstance()) && stack.peek() == EOFTerminal.getInstance())
@@ -62,13 +63,13 @@ public class ParserDescent extends ParserAbstract {
 
 	}
 
-	private void avance() {
+	private void avance() throws SyntaxException {
 		System.out.println("Avance :"+target.getName());
 		stack.pop();
 		this.target = this.lang.avance(this.sr);
 	}
 
-	private void replace() throws SyntaxeException {
+	private void replace() throws SyntaxException {
 		System.out.print("Replace:");
 		stack.pop().avance(stack, target);
 	}

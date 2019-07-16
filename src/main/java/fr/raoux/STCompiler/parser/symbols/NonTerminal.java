@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import fr.raoux.STCompiler.parser.Exception.SyntaxeException;
+import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 
 public class NonTerminal implements ISymbol {
 
@@ -139,7 +139,7 @@ public class NonTerminal implements ISymbol {
 	}
 
 	@Override
-	public void avance(Stack<ISymbol> stack, Terminal target) throws SyntaxeException{
+	public void avance(Stack<ISymbol> stack, Terminal target) throws SyntaxException{
 		System.out.print(this.name+"->");
 		for(Rule rule: rules) {
 			if(rule.getPremier().contains(target)) {

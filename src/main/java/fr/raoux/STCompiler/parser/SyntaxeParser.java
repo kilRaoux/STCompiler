@@ -8,10 +8,10 @@ import java.io.IOException;
 import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
 import fr.raoux.STCompiler.parser.symbols.DynamicTerminal;
 import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
+import fr.raoux.STCompiler.parser.symbols.GostTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.NonTerminal;
 import fr.raoux.STCompiler.parser.symbols.Rule;
-import fr.raoux.STCompiler.parser.symbols.SpaceTerminal;
 import fr.raoux.STCompiler.parser.symbols.Terminal;
 
 enum SyntaxStatus{
@@ -84,7 +84,13 @@ public class SyntaxeParser {
 			this.lang.addTerminal(new EmptyTerminal(confl[1]));
 			break;
 		case "spaceSymbol":
-			this.lang.addTerminal(new SpaceTerminal(confl[1]));
+			this.lang.addTerminal(new GostTerminal(confl[1],' '));
+			break;
+		case "tabSymbol":
+			this.lang.addTerminal(new GostTerminal(confl[1],'\t'));
+			break;
+		case "returnSymbol":
+			this.lang.addTerminal(new GostTerminal(confl[1],'\n'));
 			break;
 		default:
 			System.out.println("the configuration <"+confl[0]+"> does'nt existe!");

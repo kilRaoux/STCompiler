@@ -13,7 +13,10 @@ public class SourceReader {
 			res = this.source.charAt(this.index);
 			this.index ++;
 		}
-
+		if(res == ' ') return nextChar();
+		if(res == '\n') return nextChar();
+		if(res == '\t') return nextChar();
+		
 		return res;
 	}
 

@@ -3,7 +3,7 @@ package fr.raoux.STCompiler.parser.symbols;
 import java.util.Set;
 import java.util.Stack;
 
-import fr.raoux.STCompiler.parser.Exception.SyntaxeException;
+import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 
 public interface ISymbol {
 	public int getId();
@@ -13,5 +13,5 @@ public interface ISymbol {
 	public Set<Terminal> getPremier();
 	public Set<Terminal> getSuivant();
 	public void isInner(Rule rule);
-	public void avance(Stack<ISymbol> stack, Terminal t) throws SyntaxeException;
+	public void avance(Stack<ISymbol> stack, Terminal t) throws SyntaxException;
 }

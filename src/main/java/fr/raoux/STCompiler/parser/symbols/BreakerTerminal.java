@@ -9,7 +9,7 @@ public class BreakerTerminal extends Terminal{
 	}
 
 	public BreakerTerminal(String name, char separator) {
-		super(name);
+		super(name,""+separator);
 		this.separator = separator;
 	}
 

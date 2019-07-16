@@ -1,8 +1,9 @@
 package fr.raoux.STCompiler;
 
+import java.io.IOException;
+
 import fr.raoux.STCompiler.parser.Language;
-import fr.raoux.STCompiler.parser.ParserAbstract;
-import fr.raoux.STCompiler.parser.ParserDescent;
+import fr.raoux.STCompiler.parser.SyntaxeParser;
 
 /**
  * Hello world!
@@ -10,25 +11,11 @@ import fr.raoux.STCompiler.parser.ParserDescent;
  */
 public class App
 {
-	public static void main( String[] args )
+	public static void main( String[] args ) throws IOException
 	{
-		Language l = new Language();
-		l.parseAlphabet("var + - * / % ( )");
-		l.parseNonTerminal("S exp expadd expmul expl");
-		l.parseRules(
-				"S exp \n"+
-						"exp expadd \n"+
-						"exp expl \n"+
-						"expadd + exp\n"+
-						"expadd - exp\n"+
-						"expadd expmul \n"+
-						"expmul * exp\n"+
-						"expmul / exp\n"+
-						"expl <empty>\n" +
-				"expl var");
-		l.build("S");
-		//l.info();
-		ParserAbstract parser = new ParserDescent(l);
-		parser.run();
+		SyntaxeParser stxp = new SyntaxeParser();
+
+		Language lang = stxp.parse("ressources/syntax.stx");
+		lang.infoAll();
 	}
 }

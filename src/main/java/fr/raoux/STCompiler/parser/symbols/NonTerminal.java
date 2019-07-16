@@ -99,7 +99,6 @@ public class NonTerminal implements ISymbol {
 		if(!this.suivantSet) {
 			this.suivantSet = true;
 			for(Rule rule: this.inners) {
-				System.out.println("NAME " + this.name + " RULE "+ rule.getLineString());
 				this.suivants.addAll(rule.findSuivant(this));
 			}
 		}

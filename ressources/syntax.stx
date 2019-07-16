@@ -1,0 +1,22 @@
+comments:
+    Salut c'est un fichier de syntaxe.
+    
+configurations:
+    startSymbol:A
+    
+terminals:
+    var + - * / =
+nonterminals:
+    S A B C M
+rules:
+    S var = A
+    
+    A var B
+    
+    B + var M
+    B - var M
+    B <empty>
+    
+    M * A
+    M / A
+    M <empty>

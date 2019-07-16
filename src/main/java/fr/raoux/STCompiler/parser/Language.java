@@ -26,9 +26,33 @@ public class Language {
 		this.rules = new HashSet<Rule>();
 		this.addTerminal(new EmptyTerminal());
 	}
+
+	public Terminal getTerminal(String name) {
+		Terminal res = null;
+		for (Terminal symb: this.terminals) {
+			if (symb.getName().equals(name)) {
+				res = symb;
+				break;
+			}
+		}
+		return res;
+	}
+
+	public NonTerminal getNonTerminal(String name) {
+		NonTerminal res = null;
+		for (NonTerminal symb: this.nonTerminals) {
+			if (symb.getName().equals(name)) {
+				res = symb;
+				break;
+			}
+		}
+		return res;
+	}
+
 	public NonTerminal getStartSymbol() {
 		return startSymbol;
 	}
+
 	public Set<ISymbol> getSymbols() {
 		return symbols;
 	}
@@ -46,27 +70,11 @@ public class Language {
 		this.nonTerminals.add(nonTerminal);
 		this.symbols.add(nonTerminal);
 	}
+	public void addRule(Rule rule) {
+		this.rules.add(rule);
+	}
 
-	public Terminal getTerminal(String name) {
-		Terminal res = null;
-		for (Terminal symb: this.terminals) {
-			if (symb.getName().equals(name)) {
-				res = symb;
-				break;
-			}
-		}
-		return res;
-	}
-	public NonTerminal getNonTerminal(String name) {
-		NonTerminal res = null;
-		for (NonTerminal symb: this.nonTerminals) {
-			if (symb.getName().equals(name)) {
-				res = symb;
-				break;
-			}
-		}
-		return res;
-	}
+
 	public ISymbol getSymbol(String str) {
 		ISymbol symbol = null;
 		for(ISymbol symb: this.symbols) {
@@ -84,57 +92,8 @@ public class Language {
 		}
 		return symbol;
 	}
-	public void info() {
-		for (ISymbol symb:this.terminals) {
-			System.out.println(symb);
-		}
-		for (ISymbol symb:this.nonTerminals) {
-			System.out.println(symb);
-		}
-		System.out.println("Le Language "+(this.checkLeftRecursivity()?"est":"n'est pas")+" recursif a gauche!");
-	}
 
-	public void parseAlphabet(String rawAalphabet) {
-		String[] alphabet = rawAalphabet.split(" ");
-		for (String letter: alphabet) {
-			this.addTerminal(new Terminal(letter));
-		}
-	}
 
-	public void parseNonTerminal(String rawNonTerminals) {
-		String[] alphabet = rawNonTerminals.split(" ");
-		for (String letter: alphabet) {
-			this.addNonTerminal(new NonTerminal(letter));
-		}
-	}
-
-	public void parseRule(String nt, String...rawRule) {
-		NonTerminal nT = this.getNonTerminal(nt);
-		Rule rule = new Rule(nT);
-		nT.addRule(rule);
-		for(String str: rawRule) {
-			ISymbol symb = this.getSymbol(str);
-			symb.isInner(rule);
-			rule.add(symb);
-		}
-		this.rules.add(rule);
-	}
-
-	public void parseRules(String rawRules) {
-		String[] rules = rawRules.split("\n");
-		for(String rule: rules) {
-			String[] rawSymb = rule.split(" ");
-			NonTerminal nt = this.getNonTerminal(rawSymb[0]);
-			Rule r = new Rule(nt);
-			for(int i = 1; i< rawSymb.length; i++) {
-				ISymbol symb = this.getSymbol(rawSymb[i]);
-				symb.isInner(r);
-				r.add(symb);
-			}
-			nt.addRule(r);
-			this.rules.add(r);
-		}
-	}
 	public void build(String startSymbol) {
 		this.startSymbol = this.getNonTerminal(startSymbol);
 		this.nullable();
@@ -163,5 +122,21 @@ public class Language {
 		}
 		return false;
 	}
+	public void info() {
+		System.out.println("Language----------------------");
+		System.out.print("    Alphabet terminals:\n        ");
+		for (Terminal t:terminals) System.out.print(t.getName()+", ");
+		System.out.print("\n    Nonterminals:\n        ");
+		for (NonTerminal t:nonTerminals) System.out.print(t.getName()+", ");
+		System.out.println("\n    StartSymbol: "+this.startSymbol.getName());
+	}
 
+	public void infoAll(){
+		for (ISymbol symb:this.terminals) {
+			System.out.println(symb);
+		}
+		for (ISymbol symb:this.nonTerminals) {
+			System.out.println(symb);
+		}
+	}
 }

@@ -1,5 +1,9 @@
 package fr.raoux.STCompiler.parser;
 
+import java.io.IOException;
+
+import javax.xml.transform.Source;
+
 import fr.raoux.STCompiler.ast.AST;
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
 import fr.raoux.STCompiler.parser.Exception.SyntaxException;
@@ -30,10 +34,14 @@ public class ParserDescent extends ParserAbstract {
 
 	/**
 	 * Function to generate the AST with one source code.
+	 * @throws IOException 
+	 * @throws  
 	 */
 	@Override
-	public AST run(SourceReader src) throws SyntaxException, LanguageException {
+	public AST run(String path) throws SyntaxException, IOException {
 		// Init Stack/target/src
+		SourceReader src = SourceReader.getInstance();
+		src.setPath(path);
 		this.stack.add(EOFTerminal.getInstance());
 		this.stack.add(lang.getStartSymbol());
 		target = this.lang.avance(src);
@@ -43,11 +51,7 @@ public class ParserDescent extends ParserAbstract {
 		return new AST();
 	}
 
-	private boolean next(SourceReader src) throws SyntaxException, LanguageException {
-		System.out.println("TARGET "+target.getName()
-		+" STACKTOP "+ stack.peek().getName());
-		System.out.println("    P::"+printStack());
-		System.out.println("    S::"+src.getNextSource());
+	private boolean next(SourceReader src) throws SyntaxException {
 		if( target.equals(EOFTerminal.getInstance()) && stack.peek() == EOFTerminal.getInstance())
 			return false;
 		else if(stack.peek() instanceof Terminal)
@@ -57,8 +61,12 @@ public class ParserDescent extends ParserAbstract {
 		}else if(stack.peek().getPremier().contains(target)) {
 			this.replace();
 		}else {
-			throw new LanguageException("TARGET "+target.getName()+" STACK "+ stack.peek().getName());
+			throw new SyntaxException("invalid <"+target.getName()+">("+target.getValue()+") symbol");
 		}
+		System.out.println("\nTARGET "+target.getName()
+		+" STACKTOP "+ stack.peek().getName());
+		System.out.println("    P::"+printStack());
+		System.out.println("    S::"+src.getNextSource());
 		return true;
 
 	}

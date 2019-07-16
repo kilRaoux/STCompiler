@@ -8,20 +8,33 @@ configurations:
     tabSymbol:<tab>
     returnSymbol:<return>
 terminals:
-    breaks:+ - * / = . ( ) [ ] ;
-    dynamic:var [0-9]+
-    static:if else class 
+    breaks:+ - * / = . ( ) [ ] ; { }
+    dynamic:INT [0-9]+
+    dynamic:VAR [a-z]+
+    static:if else int 
 nonterminals:
-    S A B C M var2
+    S BLOCK EXP INST COND ADD MULL AFF DEF SYMB
 rules:
-    S var = A
+	S BLOCK ; BLOCK
+	
+    BLOCK EXP
+    BLOCK INST
+    BLOCK <empty>
     
-    A var B
+    EXP DEF
+    EXP AFF
+    EXP { BLOCK }
     
-    B + var M
-    B - var M
-    B <empty>
+    INST if ( COND ) EXP
+    INST <empty>
     
-    M * A
-    M / A
-    M <empty>
+    DEF int INT AFF
+    
+    AFF = VAR
+    AFF <empty>
+    
+    COND SYMB = = SYMB
+    
+    SYMB INT
+    SYMB VAR
+    

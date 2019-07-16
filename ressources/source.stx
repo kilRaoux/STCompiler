@@ -1,0 +1,4 @@
+if(salut==tata){
+	int a=5;
+};
+int lol;

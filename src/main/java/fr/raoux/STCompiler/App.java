@@ -22,8 +22,7 @@ public class App
 		Language lang = stxp.parse("ressources/syntax.stx");
 		//lang.infoAll();
 		ParserDescent parser = new ParserDescent(lang);
-		parser.run(new SourceReader("0=0-06*78+5"
-				+ "*5485+8"));
+		parser.run("ressources/source.stx");
 
 	}
 }

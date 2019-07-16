@@ -1,17 +1,49 @@
 package fr.raoux.STCompiler.parser;
 
-public class SourceReader {
-	private String source;
-	private int index = 0;
-	public SourceReader(String src) {
-		this.source = src;
-	}
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
+public class SourceReader {
+	private static SourceReader INSTANCE = new SourceReader();
+	private String line = "";
+	private String path;
+	private BufferedReader br;
+	private int column = 0;
+	private int row = 0;
+	private SourceReader() {
+	}
+	
+	public static SourceReader getInstance() {
+		return INSTANCE;
+	}
+	
+	public void setPath(String path) throws IOException {
+		this.path = path;
+		File file = new File(path);
+		br = new BufferedReader(new FileReader(file));
+		line = br.readLine();
+	}
+	
 	public char nextChar() {
 		char res = '\0';
-		if(this.index < this.source.length()) {
-			res = this.source.charAt(this.index);
-			this.index ++;
+		if(this.column < this.line.length()) {
+			res = this.line.charAt(this.column);
+			this.column ++;
+		}else {
+			try {
+				line = br.readLine();
+				row++;
+				column=0;
+				if(line==null) {
+					line = "\0";
+					return '\0';
+				}
+			} catch (IOException e) {
+				
+			}
 		}
 		if(res == ' ') return nextChar();
 		if(res == '\n') return nextChar();
@@ -21,18 +53,18 @@ public class SourceReader {
 	}
 
 	public int size() {
-		return this.source.length();
+		return this.line.length();
 	}
 
 	public boolean canContinue() {
-		return index < size();
+		return column < size();
 	}
 
 	public void before() {
-		this.index--;
+		this.column--;
 	}
 	
 	public String getNextSource() {
-		return this.source.substring(index);
+		return this.line.substring(column);
 	}
 }

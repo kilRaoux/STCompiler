@@ -1,5 +1,6 @@
 package fr.raoux.STCompiler.parser;
 
+import java.io.IOException;
 import java.util.Stack;
 
 import fr.raoux.STCompiler.ast.AST;
@@ -18,6 +19,6 @@ public abstract class ParserAbstract {
 	}
 
 	public abstract void build();
-	public abstract AST run(SourceReader src) throws SyntaxException, LanguageException;
+	public abstract AST run(String path) throws SyntaxException, IOException;
 
 }

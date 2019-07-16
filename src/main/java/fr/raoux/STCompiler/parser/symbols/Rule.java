@@ -75,6 +75,7 @@ public class Rule {
 					break;
 				}
 			}
+			if (nullable) this.premiers.add(EOFTerminal.getInstance());
 		}
 		return this.nullable;
 	}

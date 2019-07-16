@@ -1,9 +1,9 @@
 package fr.raoux.STCompiler.parser.symbols;
 
-public class Dynamicterminal extends Terminal {
+public class DynamicTerminal extends Terminal {
 
 	private String regex;
-	public Dynamicterminal(String name, String regex) {
+	public DynamicTerminal(String name, String regex) {
 		super(name);
 		this.regex = regex;
 		// TODO Auto-generated constructor stub

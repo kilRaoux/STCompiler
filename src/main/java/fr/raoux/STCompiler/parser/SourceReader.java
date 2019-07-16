@@ -8,7 +8,7 @@ public class SourceReader {
 	}
 
 	public char nextChar() {
-		char res = 0;
+		char res = '\0';
 		if(this.index < this.source.length()) {
 			res = this.source.charAt(this.index);
 			this.index ++;
@@ -28,5 +28,8 @@ public class SourceReader {
 	public void before() {
 		this.index--;
 	}
-
+	
+	public String getNextSource() {
+		return this.source.substring(index);
+	}
 }

@@ -3,9 +3,16 @@ package fr.raoux.STCompiler.parser;
 import fr.raoux.STCompiler.ast.AST;
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
 import fr.raoux.STCompiler.parser.Exception.SyntaxeException;
+import fr.raoux.STCompiler.parser.symbols.EOFTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.Terminal;
 
+/**
+ *  Top to Down Descending Parser.
+ *  Use to parse source code with Language to create Abstract Syntax Tree.
+ * @author raoux
+ *
+ */
 public class ParserDescent extends ParserAbstract {
 
 	private Terminal target;
@@ -21,9 +28,13 @@ public class ParserDescent extends ParserAbstract {
 
 	}
 
+	/**
+	 * Function to generate the AST with one source code.
+	 */
 	@Override
 	public AST run(SourceReader src) throws SyntaxeException, LanguageException {
 		// Init Stack/target/src
+		this.stack.add(EOFTerminal.getInstance());
 		this.stack.add(lang.getStartSymbol());
 		target = this.lang.avance(src);
 		sr = src;
@@ -34,14 +45,18 @@ public class ParserDescent extends ParserAbstract {
 
 	private boolean next(SourceReader src) throws SyntaxeException, LanguageException {
 		System.out.println("TARGET "+target.getName()+" STACKTOP "+ stack.peek().getName());
-		if(stack.peek() instanceof Terminal)
+		System.out.println("    P::"+printStack());
+		System.out.println("    S::"+src.getNextSource());
+		if( target.equals(EOFTerminal.getInstance()) && stack.peek() == EOFTerminal.getInstance())
+			return false;
+		else if(stack.peek() instanceof Terminal)
 			this.avance();
 		else if(stack.peek().isNullable() && stack.peek().getSuivant().contains(target)) {
 			this.remove();
 		}else if(stack.peek().getPremier().contains(target)) {
 			this.replace();
 		}else {
-			throw new LanguageException("TARGET "+target.getName()+" STACK "+ printStack());
+			throw new LanguageException("TARGET "+target.getName()+" STACK "+ stack.peek().getName());
 		}
 		return true;
 

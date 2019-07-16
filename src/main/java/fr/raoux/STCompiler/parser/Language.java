@@ -7,7 +7,8 @@ import java.util.Set;
 
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
 import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
-import fr.raoux.STCompiler.parser.symbols.Dynamicterminal;
+import fr.raoux.STCompiler.parser.symbols.DynamicTerminal;
+import fr.raoux.STCompiler.parser.symbols.EOFTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.NonTerminal;
 import fr.raoux.STCompiler.parser.symbols.Rule;
@@ -17,7 +18,7 @@ import fr.raoux.STCompiler.parser.symbols.Terminal;
 public class Language {
 	private Set<ISymbol> symbols = new HashSet<ISymbol>();
 	private Set<Terminal> terminals = new HashSet<Terminal>();
-	private Set<Dynamicterminal> dynamicTerminal = new HashSet<>();
+	private Set<DynamicTerminal> dynamicTerminal = new HashSet<>();
 	private Set<BreakerTerminal> breakerTerminals = new HashSet<BreakerTerminal>();
 	private Set<NonTerminal> nonTerminals = new HashSet<NonTerminal>();
 	private NonTerminal startSymbol;
@@ -73,7 +74,7 @@ public class Language {
 		this.terminals.add(terminal);
 		this.symbols.add(terminal);
 	}
-	public void addTerminal(Dynamicterminal terminal) {
+	public void addTerminal(DynamicTerminal terminal) {
 		this.terminals.add(terminal);
 		this.symbols.add(terminal);
 		this.dynamicTerminal.add(terminal);
@@ -132,7 +133,7 @@ public class Language {
 	}
 	private boolean checkLeftRecursivity() {
 		for (NonTerminal nt: this.nonTerminals) {
-			if( nt.checckrecursivity())
+			if( nt.checkRecursivity())
 				return true;
 		}
 		return false;
@@ -156,35 +157,40 @@ public class Language {
 	}
 
 	public Terminal avance(SourceReader src) {
-		String temp = ""+src.nextChar();
+		char c = src.nextChar();
+		// We add the next char of source to string.
+		String temp = ""+c;
+		// We add try to find one terminal with.
 		Terminal res = this.getTerminal(temp);
-		if(res == null) {
-			char c;
-			while (src.canContinue()) {
-				c = src.nextChar();
+		if (c=='\0') res = EOFTerminal.getInstance();
+		// If it's not done
+		else if(res == null) {
+			// while the source contain char
+			while (( c = src.nextChar())!='\0') {
+				// If c is a breaker terminal we break.
 				if(this.breakers.contains(c)) {
-					if (temp.isEmpty()) {
-						temp += c;
-						System.out.println("breaker"+ temp);
-					}
-					break;
-				}else {
-					temp += c;
+					src.before();
+					break; 
 				}
+				// Else we add to string
+				else temp += c;
 			}
+			// we retry to find the terminal
 			res = this.getTerminal(temp);
+			// If isn't may be it's a dynamic terminal.
 			if (res == null) {
-				for (Dynamicterminal t: this.dynamicTerminal) {
+				// we try every dynamic terminal
+				for (DynamicTerminal t: this.dynamicTerminal) {
 					if (t.check(temp)) {
 						res = t;
 						break;
 					}
 				}
 			}
-			src.before();
+			
 		}
 		//if (res == null) res = "EOF";
-		System.out.println("temp:"+temp);
+		//System.out.println("temp:"+temp);
 		return res;
 	}
 }

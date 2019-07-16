@@ -5,7 +5,7 @@ configurations:
     startSymbol:S
     emptySymbol:<empty>
     spaceSymbol:<space>
-    
+    eflzejflzkj:
 terminals:
     breaks:+ - * / = . ( ) [ ] ;
     dynamic:var [0-9]+

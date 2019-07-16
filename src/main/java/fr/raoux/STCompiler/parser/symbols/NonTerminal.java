@@ -45,6 +45,7 @@ public class NonTerminal implements ISymbol {
 		this.premiers = new HashSet<Terminal>();
 		this.premierNonTerminals = new HashSet<NonTerminal>();
 		this.suivants = new HashSet<Terminal>();
+		this.suivants.add(EOFTerminal.getInstance());
 		this.inners = new HashSet<Rule>();
 	}
 
@@ -69,24 +70,7 @@ public class NonTerminal implements ISymbol {
 	public void addRule(Rule rule) {
 		this.rules.add(rule);
 	}
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("\nNonTerminal-------------------------\n");
-		sb.append("    name: "+this.name);
-		sb.append("\n    Nullable: "+(this.isNullable()?"Oui":"Non"));
-		sb.append("\n    Left Recursitity: "+(this.checckrecursivity()?"Oui":"Non"));
-		sb.append("\n    Ambiguity: "+(this.checkAbiguity()?"Oui":"Non"));
-		sb.append("\n    Premier: ");
-		for(ISymbol symb: this.getPremier()) sb.append(symb.getName()+", ");
-		sb.append("\n    Suivant: ");
-		for(ISymbol symb: this.getSuivant()) sb.append(symb.getName()+", ");
-		sb.append("\n    Value:\n");
-		for(Rule rule:rules){
-			sb.append("        "+rule.getLineString()+"\n");
-		}
-		return sb.toString();
-	}
+	
 	@Override
 	public boolean isNullable() {
 		if (nullableSet){
@@ -102,6 +86,7 @@ public class NonTerminal implements ISymbol {
 		}
 		return this.nullable;
 	}
+	
 	@Override
 	public Set<Terminal> getSuivant() {
 		if(!this.suivantSet) {
@@ -129,8 +114,15 @@ public class NonTerminal implements ISymbol {
 	public void isInner(Rule rule) {
 		this.inners.add(rule);
 	}
+	
+	public void addToStack(Stack stack, Rule rule) {
+		for (int i= rule.getSymbols().size()-1; i >= 0; i--) {
+			System.out.print(rule.getSymbols().get(i).getName()+", ");
+			stack.push(rule.getSymbols().get(i));
+		}
+	}
 
-	public boolean checckrecursivity() {
+	public boolean checkRecursivity() {
 		return this.premierNonTerminals.contains(this);
 	}
 
@@ -156,11 +148,23 @@ public class NonTerminal implements ISymbol {
 		}
 		System.out.println();
 	}
-
-	public void addToStack(Stack stack, Rule rule) {
-		for (int i= rule.getSymbols().size()-1; i >= 0; i--) {
-			System.out.print(rule.getSymbols().get(i).getName()+", ");
-			stack.push(rule.getSymbols().get(i));
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\nNonTerminal-------------------------\n");
+		sb.append("    name: "+this.name);
+		sb.append("\n    Nullable: "+(this.isNullable()?"Oui":"Non"));
+		sb.append("\n    Left Recursitity: "+(this.checkRecursivity()?"Oui":"Non"));
+		sb.append("\n    Ambiguity: "+(this.checkAbiguity()?"Oui":"Non"));
+		sb.append("\n    Premier: ");
+		for(ISymbol symb: this.getPremier()) sb.append(symb.getName()+", ");
+		sb.append("\n    Suivant: ");
+		for(ISymbol symb: this.getSuivant()) sb.append(symb.getName()+", ");
+		sb.append("\n    Value:\n");
+		for(Rule rule:rules){
+			sb.append("        "+rule.getLineString()+"\n");
 		}
+		return sb.toString();
 	}
 }

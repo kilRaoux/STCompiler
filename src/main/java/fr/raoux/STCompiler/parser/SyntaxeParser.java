@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
-import fr.raoux.STCompiler.parser.symbols.Dynamicterminal;
+import fr.raoux.STCompiler.parser.symbols.DynamicTerminal;
 import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 import fr.raoux.STCompiler.parser.symbols.NonTerminal;
@@ -86,6 +86,8 @@ public class SyntaxeParser {
 		case "spaceSymbol":
 			this.lang.addTerminal(new SpaceTerminal(confl[1]));
 			break;
+		default:
+			System.out.println("the configuration <"+confl[0]+"> does'nt existe!");
 		}
 	}
 
@@ -120,7 +122,7 @@ public class SyntaxeParser {
 			break;
 		case "dynamic":
 			alphabet = com[1].split(" ");
-			this.lang.addTerminal(new Dynamicterminal(alphabet[0], alphabet[1]));
+			this.lang.addTerminal(new DynamicTerminal(alphabet[0], alphabet[1]));
 			break;
 		}
 

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+import fr.raoux.STCompiler.ast.IASTNode;
 import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 
 public class Terminal implements ISymbol {
@@ -73,8 +74,8 @@ public class Terminal implements ISymbol {
 		return this.name.equals(str);
 	}
 	@Override
-	public void avance(Stack<ISymbol> stack, Terminal t) throws SyntaxException {
-		if (t ==this) {
+	public void avance(Stack<ISymbol> stack, Terminal target, Stack<IASTNode> stackAST) throws SyntaxException {
+		if (target ==this) {
 			System.out.println("Pop "+name+" beacause find in source");
 			stack.pop();
 		}

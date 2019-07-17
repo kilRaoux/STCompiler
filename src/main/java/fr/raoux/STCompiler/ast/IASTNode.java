@@ -10,5 +10,12 @@ public interface IASTNode {
 	public ISymbol getSymbol();
 	public List<IASTNode> getChildren();
 	public void add(IASTNode node);
+	public void add(String name);
+	public default void print() {
+		System.out.print(this.getName());
+		for(IASTNode node: this.getChildren()) {
+			node.print();
+		}
+	};
 
 }

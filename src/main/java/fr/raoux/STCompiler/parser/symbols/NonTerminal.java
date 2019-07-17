@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import fr.raoux.STCompiler.ast.ASTNode;
+import fr.raoux.STCompiler.ast.IASTNode;
 import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 
 public class NonTerminal implements ISymbol {
@@ -32,6 +34,11 @@ public class NonTerminal implements ISymbol {
 		this(name,name,new ArrayList<Rule>());
 	}
 
+	public NonTerminal(String name, boolean start) {
+		this(name,name,new ArrayList<Rule>());
+		this.suivants.add(EOFTerminal.getInstance());
+	}
+
 	public NonTerminal(String name, List<Rule> rules) {
 		this(name,name,rules);
 	}
@@ -45,7 +52,6 @@ public class NonTerminal implements ISymbol {
 		this.premiers = new HashSet<Terminal>();
 		this.premierNonTerminals = new HashSet<NonTerminal>();
 		this.suivants = new HashSet<Terminal>();
-		this.suivants.add(EOFTerminal.getInstance());
 		this.inners = new HashSet<Rule>();
 	}
 
@@ -70,7 +76,7 @@ public class NonTerminal implements ISymbol {
 	public void addRule(Rule rule) {
 		this.rules.add(rule);
 	}
-	
+
 	@Override
 	public boolean isNullable() {
 		if (nullableSet){
@@ -86,7 +92,7 @@ public class NonTerminal implements ISymbol {
 		}
 		return this.nullable;
 	}
-	
+
 	@Override
 	public Set<Terminal> getSuivant() {
 		if(!this.suivantSet) {
@@ -114,11 +120,12 @@ public class NonTerminal implements ISymbol {
 	public void isInner(Rule rule) {
 		this.inners.add(rule);
 	}
-	
-	public void addToStack(Stack stack, Rule rule) {
+
+	public void addToStack(Stack stack, Rule rule, Stack<IASTNode> stackAST) {
 		for (int i= rule.getSymbols().size()-1; i >= 0; i--) {
 			System.out.print(rule.getSymbols().get(i).getName()+", ");
 			stack.push(rule.getSymbols().get(i));
+			stackAST.push(new ASTNode(rule.getSymbols().get(i).getName()));
 		}
 	}
 
@@ -139,16 +146,16 @@ public class NonTerminal implements ISymbol {
 	}
 
 	@Override
-	public void avance(Stack<ISymbol> stack, Terminal target) throws SyntaxException{
+	public void avance(Stack<ISymbol> stack, Terminal target, Stack<IASTNode> stackAST) throws SyntaxException{
 		System.out.print(this.name+"->");
 		for(Rule rule: rules) {
 			if(rule.getPremier().contains(target)) {
-				addToStack(stack,rule);
+				addToStack(stack,rule, stackAST);
 			}
 		}
 		System.out.println();
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

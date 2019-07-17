@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import fr.raoux.STCompiler.parser.Exception.SyntaxException;
 import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
 import fr.raoux.STCompiler.parser.symbols.DynamicTerminal;
 import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
@@ -31,7 +32,7 @@ public class SyntaxeParser {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Language parse(String src) throws IOException {
+	public Language parse(String src) throws IOException, SyntaxException {
 		System.out.println("Debut de lecture...");
 		File file = new File(src);
 		BufferedReader br = new BufferedReader(new FileReader(file));
@@ -59,7 +60,7 @@ public class SyntaxeParser {
 		return this.lang;
 	}
 
-	private void parseLine(String line) {
+	private void parseLine(String line) throws SyntaxException {
 		if (this.syntaxeStatus.equals(syntaxeStatus.CONFIG)) {
 			this.parseConfiguration(line);
 		}
@@ -79,6 +80,8 @@ public class SyntaxeParser {
 		switch(confl[0]) {
 		case "startSymbol":
 			this.startSymbol = confl[1];
+			NonTerminal t = new NonTerminal(confl[0]);
+			this.lang.addNonTerminal(t);
 			break;
 		case "emptySymbol":
 			this.lang.addTerminal(new EmptyTerminal(confl[1]));
@@ -97,9 +100,10 @@ public class SyntaxeParser {
 		}
 	}
 
-	private void parseRule(String line) {
+	private void parseRule(String line) throws SyntaxException {
 		String[] rawSymb = line.split(" ");
 		NonTerminal nt = lang.getNonTerminal(rawSymb[0]);
+		if (nt==null) throw new SyntaxException(rawSymb[0]+" is not define as NonTerminal");
 		Rule r = new Rule(nt);
 		for(int i = 1; i< rawSymb.length; i++) {
 			ISymbol symb = lang.getSymbol(rawSymb[i]);

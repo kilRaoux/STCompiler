@@ -1,11 +1,12 @@
 package fr.raoux.STCompiler.parser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.transform.Source;
 
 import fr.raoux.STCompiler.parser.Exception.LanguageException;
 import fr.raoux.STCompiler.parser.Exception.SyntaxException;
@@ -161,7 +162,7 @@ public class Language {
 		}
 	}
 
-	public Terminal avance(SourceReader src) throws SyntaxException {
+	public Terminal avance(SourceReader src) throws SyntaxException, IOException {
 		char c = src.nextChar();
 		this.temp = ""+c;
 		Terminal res = this.getTerminal(temp);
@@ -172,21 +173,21 @@ public class Language {
 		if(res == null) throw new SyntaxException("<"+temp+">("+(int)temp.charAt(0)+")can't correctly be parse");
 		return res;
 	}
-	
-	private Terminal findStaticTerminal(SourceReader src) {
+
+	private Terminal findStaticTerminal(SourceReader src) throws IOException {
 		char c;
 		while (( c = src.nextChar())!='\0') {
 			// If c is a breaker terminal we break.
 			if(this.breakers.contains(c)) {
 				src.before();
-				break; 
+				break;
 			}
 			else temp += c;
 		}
 		// we retry to find the terminal
 		return this.getTerminal(temp);
 	}
-	
+
 	private Terminal findDynamicterminal() {
 		for (DynamicTerminal t: this.dynamicTerminal) {
 			if (t.check(temp)) {
@@ -194,5 +195,21 @@ public class Language {
 			}
 		}
 		return null;
+	}
+
+	public void outputLog(String path) throws IOException {
+		FileWriter fr = new FileWriter(new File(path));
+		StringBuilder sb = new StringBuilder();
+		sb.append("Logging du language");
+		sb.append("----Terminal----------------------------------------------------------------------------------");
+		for(Terminal symb: terminals) {
+			sb.append(symb.toString());
+		}
+		sb.append("----NonTerminal-------------------------------------------------------------------------------");
+		for(NonTerminal symb: nonTerminals) {
+			sb.append(symb.toString());
+		}
+		fr.write(sb.toString());
+		fr.close();
 	}
 }

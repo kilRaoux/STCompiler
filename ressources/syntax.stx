@@ -7,34 +7,29 @@ configurations:
     spaceSymbol:<space>
     tabSymbol:<tab>
     returnSymbol:<return>
+    
 terminals:
-    breaks:+ - * / = . ( ) [ ] ; { }
+    breaks:+ - * / = . ( ) [ ] ; { } , :
     dynamic:INT [0-9]+
-    dynamic:VAR [a-z]+
-    static:if else int 
+    dynamic:VAR [a-zA-Z]+
+    
 nonterminals:
-    S BLOCK EXP INST COND ADD MULL AFF DEF SYMB
+    S A B C
+    
 rules:
-	S BLOCK ; BLOCK
+	S A
+	S B
+	S C
+	S INT
+	S VAR
+	S <empty>
 	
-    BLOCK EXP
-    BLOCK INST
-    BLOCK <empty>
+	A ( S C )
+	
+	B [ S C ]
+	
+	C , S
+	C <empty>
+	
     
-    EXP DEF
-    EXP AFF
-    EXP { BLOCK }
-    
-    INST if ( COND ) EXP
-    INST <empty>
-    
-    DEF int INT AFF
-    
-    AFF = VAR
-    AFF <empty>
-    
-    COND SYMB = = SYMB
-    
-    SYMB INT
-    SYMB VAR
     

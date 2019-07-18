@@ -1,4 +1,4 @@
-package fr.raoux.STCompiler.parser.Exception;
+package fr.raoux.STCompiler.parser.exception;
 
 public class LanguageException extends Exception {
 

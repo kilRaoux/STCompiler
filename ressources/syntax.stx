@@ -6,7 +6,7 @@ configurations:
     emptySymbol:<empty>
     spaceSymbol:<space>
     tabSymbol:<tab>
-    returnSymbol:<return>
+    returnSymbol:<n> <t>
     
 terminals:
     breaks:+ - * / = . ( ) [ ] ; { } , :

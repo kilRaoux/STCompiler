@@ -8,7 +8,7 @@ import java.util.Stack;
 
 import fr.raoux.STCompiler.ast.ASTNode;
 import fr.raoux.STCompiler.ast.IASTNode;
-import fr.raoux.STCompiler.parser.Exception.SyntaxException;
+import fr.raoux.STCompiler.parser.exception.SyntaxException;
 
 public class NonTerminal implements ISymbol {
 

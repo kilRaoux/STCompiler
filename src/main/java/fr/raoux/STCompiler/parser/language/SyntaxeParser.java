@@ -1,19 +1,11 @@
-package fr.raoux.STCompiler.parser;
+package fr.raoux.STCompiler.parser.language;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import fr.raoux.STCompiler.parser.Exception.SyntaxException;
-import fr.raoux.STCompiler.parser.symbols.BreakerTerminal;
-import fr.raoux.STCompiler.parser.symbols.DynamicTerminal;
-import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
-import fr.raoux.STCompiler.parser.symbols.GostTerminal;
-import fr.raoux.STCompiler.parser.symbols.ISymbol;
-import fr.raoux.STCompiler.parser.symbols.NonTerminal;
-import fr.raoux.STCompiler.parser.symbols.Rule;
-import fr.raoux.STCompiler.parser.symbols.Terminal;
+import fr.raoux.STCompiler.parser.exception.SyntaxException;
 
 enum SyntaxStatus{
 	CONFIG, DEFINITION, TERMINAL, NONTERMINAL, RULES, NONE,
@@ -25,8 +17,8 @@ enum SyntaxStatus{
  */
 public class SyntaxeParser {
 	private SyntaxStatus syntaxeStatus = SyntaxStatus.NONE;
-	private Language lang = new Language();
 	private String startSymbol = "S";
+	private LanguageConfig config = new LanguageConfig();
 
 	public SyntaxeParser() {
 		// TODO Auto-generated constructor stub
@@ -56,8 +48,7 @@ public class SyntaxeParser {
 				this.parseLine(line);
 			}
 		}
-		this.lang.build(this.startSymbol);
-		return this.lang;
+		return this.config.generate();
 	}
 
 	private void parseLine(String line) throws SyntaxException {
@@ -65,13 +56,13 @@ public class SyntaxeParser {
 			this.parseConfiguration(line);
 		}
 		else if (this.syntaxeStatus.equals(syntaxeStatus.RULES)) {
-			this.parseRule(line);
+			this.config.rules.add(line);
 		}
 		else if (this.syntaxeStatus.equals(syntaxeStatus.TERMINAL)) {
 			this.parseTerminals(line);
 		}
 		else if (this.syntaxeStatus.equals(syntaxeStatus.NONTERMINAL)) {
-			this.parseNonTerminals(line);
+			this.config.nonTerminals.add(line);
 		}
 	}
 
@@ -79,72 +70,42 @@ public class SyntaxeParser {
 		String[] confl = line.split(":");
 		switch(confl[0]) {
 		case "startSymbol":
-			this.startSymbol = confl[1];
-			NonTerminal t = new NonTerminal(confl[0]);
-			this.lang.addNonTerminal(t);
+			this.config.startSymbol = confl[1];
 			break;
 		case "emptySymbol":
-			this.lang.addTerminal(new EmptyTerminal(confl[1]));
+			this.config.emptySymbol = confl[1];
 			break;
 		case "spaceSymbol":
-			this.lang.addTerminal(new GostTerminal(confl[1],' '));
+			this.config.spaceSymbol = confl[1];
 			break;
 		case "tabSymbol":
-			this.lang.addTerminal(new GostTerminal(confl[1],'\t'));
+			this.config.tabSymbol = confl[1];
 			break;
 		case "returnSymbol":
-			this.lang.addTerminal(new GostTerminal(confl[1],'\n'));
+			String[] strs = confl[1].split(" ");
+			this.config.returnSymbol10 = strs[0];
+			this.config.returnSymbol13 = strs[1];
+			break;
+		case "name":
+			this.config.name = confl[1];
 			break;
 		default:
 			System.out.println("the configuration <"+confl[0]+"> does'nt existe!");
 		}
 	}
 
-	private void parseRule(String line) throws SyntaxException {
-		String[] rawSymb = line.split(" ");
-		NonTerminal nt = lang.getNonTerminal(rawSymb[0]);
-		if (nt==null) throw new SyntaxException(rawSymb[0]+" is not define as NonTerminal");
-		Rule r = new Rule(nt);
-		for(int i = 1; i< rawSymb.length; i++) {
-			ISymbol symb = lang.getSymbol(rawSymb[i]);
-			symb.isInner(r);
-			r.add(symb);
-		}
-		nt.addRule(r);
-		lang.addRule(r);
-	}
-
 	private void parseTerminals(String line) {
 		String[] com = line.split(":");
-		String[] alphabet;
 		switch(com[0]) {
 		case "static":
-			alphabet= com[1].split(" ");
-			for (String letter: alphabet) {
-				this.lang.addTerminal(new Terminal(letter));
-			}
+			this.config.staticTerminal.add(com[1]);
 			break;
 		case "breaks":
-			alphabet = com[1].split(" ");
-			for (String letter: alphabet) {
-				this.lang.addTerminal(new BreakerTerminal(letter));
-			}
+			this.config.breaksTerminal.add(com[1]);
 			break;
 		case "dynamic":
-			alphabet = com[1].split(" ");
-			this.lang.addTerminal(new DynamicTerminal(alphabet[0], alphabet[1]));
+			this.config.dynamicTerminal.add(com[1]);
 			break;
 		}
-
-
-
 	}
-
-	private void parseNonTerminals(String line) {
-		String[] alphabet = line.split(" ");
-		for (String letter: alphabet) {
-			this.lang.addNonTerminal(new NonTerminal(letter));
-		}
-	}
-
 }

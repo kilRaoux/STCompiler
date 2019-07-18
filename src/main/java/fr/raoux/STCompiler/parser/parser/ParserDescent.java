@@ -1,4 +1,4 @@
-package fr.raoux.STCompiler.parser;
+package fr.raoux.STCompiler.parser.parser;
 
 import java.io.IOException;
 import java.util.Stack;
@@ -6,7 +6,9 @@ import java.util.Stack;
 import fr.raoux.STCompiler.ast.AST;
 import fr.raoux.STCompiler.ast.ASTNode;
 import fr.raoux.STCompiler.ast.IASTNode;
-import fr.raoux.STCompiler.parser.Exception.SyntaxException;
+import fr.raoux.STCompiler.parser.exception.SyntaxException;
+import fr.raoux.STCompiler.parser.language.Language;
+import fr.raoux.STCompiler.parser.language.SourceReader;
 import fr.raoux.STCompiler.parser.symbols.EOFTerminal;
 import fr.raoux.STCompiler.parser.symbols.EmptyTerminal;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;

@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import fr.raoux.STCompiler.ast.IASTNode;
-import fr.raoux.STCompiler.parser.Exception.SyntaxException;
+import fr.raoux.STCompiler.parser.exception.SyntaxException;
 
 public class Terminal implements ISymbol {
 	private static int TID;

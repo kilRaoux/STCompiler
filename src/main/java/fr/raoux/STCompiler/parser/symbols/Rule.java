@@ -5,13 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represent one rule of syntax
+ * Link with one NonTerminal Symbol
+ * @author utilisateur2
+ *
+ */
 public class Rule {
 
 	private NonTerminal master;
 	private List<ISymbol> symbols;
-	public List<ISymbol> getSymbols() {
-		return symbols;
-	}
 
 	private boolean nullable;
 	private boolean nullableSet;
@@ -23,14 +26,16 @@ public class Rule {
 	public Set<NonTerminal> getPremierNonterminal() {
 		return premierNonterminal;
 	}
+
 	public Rule(NonTerminal master) {
 		this.master = master;
-		nullable = true;
-		nullableSet = false;
+		this.nullable = true;
+		this.nullableSet = false;
 		this.symbols = new ArrayList<ISymbol>();
 		this.premiers = new HashSet<Terminal>();
 		this.premierNonterminal = new HashSet<NonTerminal>();
 	}
+
 	private boolean subPremier(int index){
 		if (index >= this.symbols.size()) {
 			return false;
@@ -45,6 +50,10 @@ public class Rule {
 
 		}
 	}
+
+	public List<ISymbol> getSymbols() {return symbols;}
+	public void add(ISymbol symbol) { this.symbols.add(symbol);}
+
 	public Set<Terminal> getPremier() {
 		if (!this.premierSet) {
 			this.premierSet = true;
@@ -62,9 +71,7 @@ public class Rule {
 		sb.append(this.isNullable()?"    (nullable)":"    (not nullable)");
 		return sb.toString();
 	}
-	public void add(ISymbol symbol) {
-		this.symbols.add(symbol);
-	}
+
 
 	public boolean isNullable() {
 		if (!nullableSet) {

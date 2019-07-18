@@ -1,8 +1,6 @@
-package fr.raoux.STCompiler.parser.Exception;
+package fr.raoux.STCompiler.parser.exception;
 
-import java.io.IOException;
-
-import fr.raoux.STCompiler.parser.SourceReader;
+import fr.raoux.STCompiler.parser.language.SourceReader;
 
 public class SyntaxException extends Exception {
 
@@ -12,12 +10,6 @@ public class SyntaxException extends Exception {
 
 	public SyntaxException(String message) {
 		super("Syntax Error:"+message +SourceReader.getInstance().atLine()+"\n");
-		try {
-			SourceReader.getInstance().affAllSrouce();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		// TODO Auto-generated constructor stub
 	}
 

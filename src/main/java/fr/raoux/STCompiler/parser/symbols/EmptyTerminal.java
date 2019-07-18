@@ -4,14 +4,13 @@ public class EmptyTerminal extends Terminal {
 
 	public EmptyTerminal() {
 		super("<empty>");
-		// TODO Auto-generated constructor stub
 	}
 	public EmptyTerminal(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 	@Override
 	public boolean isNullable() {
 		return true;
 	}
+
 }

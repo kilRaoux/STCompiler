@@ -1,10 +1,11 @@
-package fr.raoux.STCompiler.parser;
+package fr.raoux.STCompiler.parser.parser;
 
 import java.io.IOException;
 import java.util.Stack;
 
 import fr.raoux.STCompiler.ast.AST;
-import fr.raoux.STCompiler.parser.Exception.SyntaxException;
+import fr.raoux.STCompiler.parser.exception.SyntaxException;
+import fr.raoux.STCompiler.parser.language.Language;
 import fr.raoux.STCompiler.parser.symbols.ISymbol;
 
 public abstract class ParserAbstract {

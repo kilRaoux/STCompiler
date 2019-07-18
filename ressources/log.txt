@@ -1,95 +1,90 @@
 Logging du language----Terminal----------------------------------------------------------------------------------
 Terminale----------------------------
-    name:+    Nullable: not nullable
-Terminale----------------------------
-    name:-    Nullable: not nullable
-Terminale----------------------------
-    name:<return>    Nullable: not nullable
-Terminale----------------------------
-    name:)    Nullable: not nullable
-Terminale----------------------------
-    name:,    Nullable: not nullable
-Terminale----------------------------
-    name:]    Nullable: not nullable
+    name:<space>    Nullable: not nullable
 Terminale----------------------------
     name:VAR    Nullable: not nullable
 Terminale----------------------------
-    name:/    Nullable: not nullable
-Terminale----------------------------
-    name:}    Nullable: not nullable
-Terminale----------------------------
-    name:;    Nullable: not nullable
-Terminale----------------------------
-    name:<tab>    Nullable: not nullable
-Terminale----------------------------
-    name:.    Nullable: not nullable
-Terminale----------------------------
-    name:{    Nullable: not nullable
-Terminale----------------------------
-    name:<space>    Nullable: not nullable
-Terminale----------------------------
     name:(    Nullable: not nullable
-Terminale----------------------------
-    name:[    Nullable: not nullable
-Terminale----------------------------
-    name:=    Nullable: not nullable
 Terminale----------------------------
     name:<empty>    Nullable: nullable
 Terminale----------------------------
+    name:<tab>    Nullable: not nullable
+Terminale----------------------------
+    name:)    Nullable: not nullable
+Terminale----------------------------
+    name:<n>    Nullable: not nullable
+Terminale----------------------------
     name:*    Nullable: not nullable
 Terminale----------------------------
-    name:INT    Nullable: not nullable----NonTerminal-------------------------------------------------------------------------------
-NonTerminal-------------------------
-    name: B
-    Nullable: Non
-    Left Recursitity: Non
-    Ambiguity: Non
-    Premier: [, 
-    Suivant: <EOF>, ,, ), ], <empty>, 
-    Value:
-        [SC]    (not nullable)
-
-NonTerminal-------------------------
-    name: startSymbol
-    Nullable: Non
-    Left Recursitity: Non
-    Ambiguity: Non
-    Premier: 
-    Suivant: 
-    Value:
-
+    name:+    Nullable: not nullable
+Terminale----------------------------
+    name:,    Nullable: not nullable
+Terminale----------------------------
+    name:<t>    Nullable: not nullable
+Terminale----------------------------
+    name:-    Nullable: not nullable
+Terminale----------------------------
+    name:.    Nullable: not nullable
+Terminale----------------------------
+    name:INT    Nullable: not nullable
+Terminale----------------------------
+    name:/    Nullable: not nullable
+Terminale----------------------------
+    name:<EOF>    Nullable: not nullable
+Terminale----------------------------
+    name:[    Nullable: not nullable
+Terminale----------------------------
+    name:;    Nullable: not nullable
+Terminale----------------------------
+    name:{    Nullable: not nullable
+Terminale----------------------------
+    name:=    Nullable: not nullable
+Terminale----------------------------
+    name:]    Nullable: not nullable
+Terminale----------------------------
+    name:}    Nullable: not nullable----NonTerminal-------------------------------------------------------------------------------
 NonTerminal-------------------------
     name: A
     Nullable: Non
     Left Recursitity: Non
     Ambiguity: Non
     Premier: (, 
-    Suivant: <EOF>, ,, ), ], <empty>, 
+    Suivant: 
     Value:
         (SC)    (not nullable)
 
 NonTerminal-------------------------
-    name: C
-    Nullable: Oui
+    name: B
+    Nullable: Non
     Left Recursitity: Non
     Ambiguity: Non
-    Premier: <EOF>, ,, <empty>, 
-    Suivant: ), ], 
+    Premier: [, 
+    Suivant: 
     Value:
-        ,S    (not nullable)
-        <empty>    (nullable)
+        [SC]    (not nullable)
 
 NonTerminal-------------------------
     name: S
     Nullable: Oui
     Left Recursitity: Non
     Ambiguity: Oui
-    Premier: <EOF>, (, ,, [, VAR, <empty>, INT, 
-    Suivant: <EOF>, ,, ), ], <empty>, 
+    Premier: (, [, <empty>, ,, VAR, <EOF>, INT, 
+    Suivant: 
     Value:
         A    (not nullable)
         B    (not nullable)
         C    (nullable)
         INT    (not nullable)
         VAR    (not nullable)
+        <empty>    (nullable)
+
+NonTerminal-------------------------
+    name: C
+    Nullable: Oui
+    Left Recursitity: Non
+    Ambiguity: Non
+    Premier: <empty>, ,, <EOF>, 
+    Suivant: 
+    Value:
+        ,S    (not nullable)
         <empty>    (nullable)
